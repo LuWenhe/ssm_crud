@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface DepartmentMapper {
+	
     long countByExample(DepartmentExample example);
 
     int deleteByExample(DepartmentExample example);
@@ -27,4 +28,5 @@ public interface DepartmentMapper {
     int updateByPrimaryKeySelective(Department record);
 
     int updateByPrimaryKey(Department record);
+
 }

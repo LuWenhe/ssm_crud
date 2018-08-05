@@ -14,7 +14,17 @@ public class Employee {
     //希望查询员工信息的同时, 部门信息也是查询好的
     private Department department;
     
-    public void setDepartment(Department department) {
+    public Employee() {}
+    
+    public Employee(Integer empId, String name, String gender, String email, Integer dId) {
+		this.empId = empId;
+		this.name = name;
+		this.gender = gender;
+		this.email = email;
+		this.dId = dId;
+	}
+
+	public void setDepartment(Department department) {
 		this.department = department;
 	}
     

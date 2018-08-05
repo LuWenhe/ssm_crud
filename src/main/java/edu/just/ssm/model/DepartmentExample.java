@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentExample {
+	
     protected String orderByClause;
 
     protected boolean distinct;
@@ -326,5 +327,7 @@ public class DepartmentExample {
         protected Criterion(String condition, Object value, Object secondValue) {
             this(condition, value, secondValue, null);
         }
+        
     }
+    
 }
