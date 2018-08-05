@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+ 
+  <context id="DB2Tables" targetRuntime="MyBatis3">
+	<!-- 配置不生成注释 -->
+	<commentGenerator>
+		<property name="suppressAllComments" value="true"/>
+	</commentGenerator>
+
+ 	<!-- 指定如何连接到目标数据库 -->
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+        connectionURL="jdbc:mysql://localhost:3306/ssm_crud?useSSL=true"
+        userId="root"
+        password="lwh011305">
+    </jdbcConnection>
+
+    <javaTypeResolver >
+      <property name="forceBigDecimals" value="false" />
+    </javaTypeResolver>
+
+	<!-- 
+		指定 JavaBean 的生成策略 
+		targetPackage: 指定目标包名
+		targetProject: 目标工程
+	-->
+    <javaModelGenerator targetPackage="edu.just.ssm.model" 
+    	targetProject="src/main/java">
+      <property name="enableSubPackages" value="true" />
+      <property name="trimStrings" value="true" />
+    </javaModelGenerator>
+
+	<!-- sql 映射生成策略 -->
+    <sqlMapGenerator targetPackage="mapper"  targetProject="src/main/resources">
+      <property name="enableSubPackages" value="true" />
+    </sqlMapGenerator>
+
+	<!-- 指定 mapper 接口所在的位置 -->
+    <javaClientGenerator type="XMLMAPPER" targetPackage="edu.just.ssm.dao"  
+    	targetProject="src/main/java">
+      <property name="enableSubPackages" value="true" />
+    </javaClientGenerator>
+
+	<!-- 
+		指定要逆向分析那些表, 根据表要创建 JavaBean
+		> domainObjectName: 需要创建的 POJO 类的名称
+	 -->
+    <table tableName="employee" domainObjectName="Employee"></table>
+	<table tableName="department" domainObjectName="Department"></table>
+	
+  </context>
+</generatorConfiguration>
