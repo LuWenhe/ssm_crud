@@ -22,4 +22,11 @@ public class EmployeeService {
 		return employeeMapper.selectByExampleWithDept(null);
 	}
 	
+	/**
+	 * 新增员工信息
+	 */
+	public int addEmployee(Employee employee) {
+		return employeeMapper.insertSelective(employee);
+	}
+	
 }

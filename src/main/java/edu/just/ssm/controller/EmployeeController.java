@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -22,10 +23,26 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 	
-	@RequestMapping("/emps2")
+	/**
+	 * 用于员工保存
+	 * @param employee
+	 * @return
+	 */
+	@RequestMapping(value="/emp", method=RequestMethod.POST)
 	@ResponseBody
-	public Message getEmployeesWithJson(@RequestParam(value="page", defaultValue="1")Integer pageNo, 
-			Model model) {
+	public Message addEmployee(Employee employee) {
+		employeeService.addEmployee(employee);
+		return Message.success();
+	}
+	
+	/**
+	 * 用于展示员工的数据, 默认从第一页开始
+	 * @param pageNo
+	 * @return
+	 */
+	@RequestMapping(value="/emp", method=RequestMethod.GET)
+	@ResponseBody
+	public Message getEmployeesWithJson(@RequestParam(value="page", defaultValue="1")Integer pageNo) {
 		//传入页面, 以及每一页的大小
 		PageHelper.startPage(pageNo, 10);
 		

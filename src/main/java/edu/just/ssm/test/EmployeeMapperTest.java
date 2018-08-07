@@ -29,6 +29,12 @@ public class EmployeeMapperTest {
 		System.out.println(selectByExampleWithDept);
 	}
 	
+	@Test
+	public void addEmployee2() {
+		int a = employeeMapper.insertSelective(new Employee(null, "hello", "m", "ww", 3));
+		System.out.println(a);
+	}
+	
 	/**
 	 * 测试员工插入, 使用可以执行批量操作的 sqlSession
 	 */
