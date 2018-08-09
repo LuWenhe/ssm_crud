@@ -2,3 +2,7 @@
 /emp		POST 保存员工
 /emp/{id}	PUT 修改员工
 /emp/{id}	DELETE 删除员工
+
+前端使用 ajax 进行校验
+
+后端使用 JSR303 进行校验

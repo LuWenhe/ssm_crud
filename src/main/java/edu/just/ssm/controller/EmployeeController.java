@@ -1,10 +1,16 @@
 package edu.just.ssm.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,16 +29,50 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 	
+	@RequestMapping("/checkUser")
+	@ResponseBody
+	public Message checkUser(String name) {
+		String regex = "(^[a-zA-Z0-9_-]{6,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";
+		if(!name.matches(regex)) {
+			return Message.fail().add("mes", "格式不正确");
+		}
+		
+		boolean flag = employeeService.checkUser(name);
+
+		//此时表示有相同的员工
+		if(!flag) {
+			return Message.fail().add("mes", "用户名不可用");
+		}
+		
+		//此时表示不存在相同的员工
+		return Message.success();
+	}
+	
 	/**
-	 * 用于员工保存
+	 * 用于员工保存, 在后台对数据进行校验
 	 * @param employee
 	 * @return
 	 */
 	@RequestMapping(value="/emp", method=RequestMethod.POST)
 	@ResponseBody
-	public Message addEmployee(Employee employee) {
-		employeeService.addEmployee(employee);
-		return Message.success();
+	public Message addEmployee(@Valid Employee employee, BindingResult result) {
+		if(result.hasErrors()) {
+			Map<String, Object> map = new HashMap<>();
+			
+			//校验失败应该返回失败, 在模态框中显示校验失败的错误信息
+			List<FieldError> fieldErrors = result.getFieldErrors();
+			for(FieldError fieldError: fieldErrors) {
+				System.out.println("错误字段" + fieldError.getField());
+				System.out.println("错误信息: " + fieldError.getDefaultMessage());
+				map.put(fieldError.getField(), fieldError.getDefaultMessage());
+			}
+			
+			return Message.fail().add("error1", map);
+
+		} else {
+			employeeService.addEmployee(employee);
+			return Message.success();
+		}
 	}
 	
 	/**

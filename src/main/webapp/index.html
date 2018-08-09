@@ -26,6 +26,10 @@
 		
 			//模态框的点击事件
 			$("#empModal_btn").click(function(){
+				//将表单进行重置
+				reset_form("#empModal form");
+				$("#emp_save_btn").removeAttr("state");
+				
 				$("select").empty();
 				
 				//发送 ajax 请求, 查出部门信息, 显示在下拉列表当中
@@ -40,6 +44,11 @@
 			$("#emp_save_btn").click(function(){
 				//发送 ajax 请求, 保存员工数据
 				//alert($("form").serialize());
+
+				//判断之前的 ajax 用户名校验是否成功, 如果成功才往下执行
+				if($(this).attr("state") == "error"){
+					return false;
+				}
 				
 				//应该在保存之前对传过来的数据进行校验
 				var flag = validate_emp();
@@ -52,18 +61,65 @@
 					type: "POST",
 					data: $("form").serialize(),	//序列化表单, 得到 name=eclipse&email=luwenhe12345%40126.com&gender=w&dId=1
 					success: function(data){
-						//当员工信息保存成功时候, 需要
-						alert("插入成功");
-						
-						//1.关闭模态框
-						$('#empModal').modal('hide');
-						
-						//2.来到最后一页, 同时显示刚才保存的数据, 发送 ajax 请求显示最后一页数据即可
-						to_page(9999);
+						//如果数据是正确的
+						if(data.code == 100){
+							//当员工信息保存成功时候, 需要
+							alert("插入成功");
+							
+							//1.关闭模态框
+							$('#empModal').modal('hide');
+							
+							//2.来到最后一页, 同时显示刚才保存的数据, 发送 ajax 请求显示最后一页数据即可
+							to_page(9999);
+						//如果数据不正确
+						} else {
+							var nameError = data.extend.error1.name;
+							var emailError = data.extend.error1.email;
+							
+							if(emailError != undefined){
+								//显示邮箱错误信息
+								show_validate("#emp_email", "error", emailError);
+							}
+							
+							if(nameError != undefined){
+								//显示员工名字的错误信息
+								show_validate("#emp_name", "error", nameError);
+							}
+						}
 					}
 				});
 			});
+			
+			//用户增加模态框里面的表单改变事件
+			$("#emp_name").change(function(){
+				var name = this.value;
+				
+				$.ajax({
+					url: "checkUser",
+					type: "GET",
+					data: "name=" + name,
+					success: function(data){
+						if(data.code == 100){
+							show_validate("#emp_name", "success", "可以使用");
+							$("#emp_save_btn").attr("state", "success");
+						}
+						
+						if(data.code == 200){
+							show_validate("#emp_name", "error", data.extend.mes);
+							$("#emp_save_btn").attr("state", "error");
+						}
+					}
+				});
+			});
+			
 		});
+		
+		function reset_form(ele){
+			$(ele)[0].reset();
+			//清空表单样式
+			$(ele).find("div").removeClass("has-success has-error");
+			$(ele).find(".help-block").text("");
+		}
 		
 		//校验表单数据
 		function validate_emp(){
@@ -85,7 +141,7 @@
 				show_validate("#emp_email", "error", "邮箱格式不正确");
 				return false;
 			} else {
-				show_validate("#emp_email", "success", "邮箱格式不正确");
+				show_validate("#emp_email", "success", "邮箱正确");
 			}
 			
 			return true;
@@ -331,6 +387,64 @@
 	    		</div>
 	    	</div>
 		</div>
+		
+		<!-- 员工修改的模态框 -->
+		<div class="modal fade" id="empModalUpdate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			    	<div class="modal-header">
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				        <h4 class="modal-title" id="myModalLabel">员工修改</h4>
+				    </div>
+				    
+				    <div class="modal-body">
+				        <form class="form-horizontal">
+					    	<div class="form-group">
+					    		<label for="emp_name" class="col-sm-2 control-label">姓名</label>
+					    		<div class="col-sm-10">
+					      			<input type="text" name="name" class="form-control" id="emp_name_update" placeholder="your name">
+					    			<span id="helpBlock2" class="help-block"></span>
+					    		</div>
+					  		</div>
+					  
+						    <div class="form-group">
+						    	<label for="emp_email" class="col-sm-2 control-label">邮箱</label>
+						    	<div class="col-sm-10">
+						      		<input type="email" name="email" class="form-control" id="emp_email_update" placeholder="xxx@126.com">
+						    		<span id="helpBlock2" class="help-block"></span>
+						    	</div>
+						  	</div>
+					  
+					  		 <div class="form-group">
+						    	<label for="emp_email" class="col-sm-2 control-label">性别</label>
+						    	<div class="col-sm-10">
+						      		<label class="radio-inline">
+  										<input type="radio" name="gender" id="male_radio_update" value="m" checked="checked"> 男
+									</label>
+									
+									<label class="radio-inline">
+									  <input type="radio" name="gender" id="female_radio_update" value="w"> 女
+									</label>
+						    	</div>
+						  	</div>
+						  	
+						  	<div class="form-group">
+						    	<label for="emp_dept" class="col-sm-2 control-label">部门</label>
+						    	<div class="col-sm-3">
+						    		<!-- 部门提交 id 即可 -->
+									<select class="form-control" name="dId"></select>
+						    	</div>
+						  	</div>
+						</form>
+				    </div>
+				    
+				    <div class="modal-footer">
+				        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				        <button type="button" class="btn btn-primary">Save changes</button>
+			    	</div>
+			    </div>
+			</div>
+		</div>
 	
 		<div class="container">
 			<!-- 标签 -->
@@ -379,9 +493,7 @@
 				</div>
 				
 				<!-- 分页信息 -->
-				<div class="col-md-6" id="page_nav_id">
-					
-				</div>
+				<div class="col-md-6" id="page_nav_id"></div>
 			</div>
 		</div>
 	</body>

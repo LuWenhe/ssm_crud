@@ -12,6 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import edu.just.ssm.dao.EmployeeMapper;
 import edu.just.ssm.model.Employee;
+import edu.just.ssm.model.EmployeeExample;
+import edu.just.ssm.model.EmployeeExample.Criteria;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
@@ -22,6 +24,16 @@ public class EmployeeMapperTest {
 
 	@Autowired
 	private SqlSession sqlSession;
+	
+	@Test
+	public void checkUser() {
+		EmployeeExample example = new EmployeeExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andNameEqualTo("б╫нд╨у2");
+	
+		long count = employeeMapper.countByExample(example);
+		System.out.println(count);
+	}
 	
 	@Test
 	public void get() {
