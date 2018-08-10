@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,38 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeService employeeService;
+
+	/**
+	 * 员工删除方法
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/emp/{id}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public Message deleteEmployee(@PathVariable("id")Integer empId) {
+		employeeService.deleteEmployee(empId);
+		return Message.success();
+	}
+	
+	/**
+	 * 员工更新方法
+	 * @param employee
+	 * @return
+	 */
+	@RequestMapping(value="/emp/{empId}", method=RequestMethod.PUT)
+	@ResponseBody
+	public Message updateEmployee(Employee employee, HttpServletRequest request) {
+		System.out.println(employee);
+		employeeService.updateEmployee(employee);
+		return Message.success();
+	}
+	
+	@RequestMapping(value="/emp/{id}", method=RequestMethod.GET)
+	@ResponseBody
+	public Message getEmployee(@PathVariable("id") Integer empId) {
+		Employee employee = employeeService.getEmployeeById(empId);
+		return Message.success().add("employee", employee);
+	}
 	
 	@RequestMapping("/checkUser")
 	@ResponseBody
@@ -62,7 +96,7 @@ public class EmployeeController {
 			//校验失败应该返回失败, 在模态框中显示校验失败的错误信息
 			List<FieldError> fieldErrors = result.getFieldErrors();
 			for(FieldError fieldError: fieldErrors) {
-				System.out.println("错误字段" + fieldError.getField());
+				System.out.println("错误字段: " + fieldError.getField());
 				System.out.println("错误信息: " + fieldError.getDefaultMessage());
 				map.put(fieldError.getField(), fieldError.getDefaultMessage());
 			}

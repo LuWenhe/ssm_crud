@@ -16,8 +16,25 @@ public class EmployeeService {
 	@Autowired
 	private EmployeeMapper employeeMapper;
 	
-	public boolean updateEmployee(Employee employee) {
-		return false;
+	public void deleteEmployee(Integer id) {
+		employeeMapper.deleteByPrimaryKey(id);
+	}
+	
+	/**
+	 * 员工更新操作
+	 * @param employee
+	 */
+	public void updateEmployee(Employee employee) {
+		employeeMapper.updateByPrimaryKeySelective(employee);
+	}
+	
+	/**
+	 * 根据员工 id 查询员工信息
+	 * @param id
+	 * @return
+	 */
+	public Employee getEmployeeById(Integer empId) {
+		return employeeMapper.selectByPaimayKeyWithDept(empId);
 	}
 	
 	/**

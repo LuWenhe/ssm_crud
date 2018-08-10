@@ -26,6 +26,12 @@ public class EmployeeMapperTest {
 	private SqlSession sqlSession;
 	
 	@Test
+	public void deleteEmp() {
+		employeeMapper.deleteByPrimaryKey(153);
+		System.out.println("³É¹¦");
+	}
+	
+	@Test
 	public void checkUser() {
 		EmployeeExample example = new EmployeeExample();
 		Criteria criteria = example.createCriteria();
@@ -33,6 +39,12 @@ public class EmployeeMapperTest {
 	
 		long count = employeeMapper.countByExample(example);
 		System.out.println(count);
+	}
+	
+	@Test
+	public void getEmp() {
+		Employee selectByPaimayKeyWithDept = employeeMapper.selectByPaimayKeyWithDept(1);
+		System.out.println(selectByPaimayKeyWithDept);
 	}
 	
 	@Test

@@ -6,3 +6,25 @@
 前端使用 ajax 进行校验
 
 后端使用 JSR303 进行校验
+
+======================================================================
+
+使用 PUT 修改员工数据的时候, 会报出以下错误, 请全体中有数据, 但是 Employee 里面没有
+Employee [empId=3, name=null, gender=null, email=null, dId=null, department=null]
+
+原因: 1.将请求体中的数据, 封装了一个 map
+	 2.request.getParameter("name") 就会从这个 map 中取值
+	 3.springMVC 封装 POJO 对象时, 会把 POJO 中每个属性的值都放入 map 对象中
+
+AJAX 发送 PUT 请求引发的血案: PUT 请求, 请求体中的数据, request.getParameter("name") 拿不到
+						Tomcat 一看是 PUT 请求就不会封装请求体中的数据, 只有 POST 形式的请求才可以封装请求体为 map
+
+如何解决?
+	如果要直接支持发送 PUT 之类的请求, 同时还有封装请求中的数据的话, 需要配置 HttpPutFormContentFilter 过滤器,
+	作用是将请求体中的数据解析包装成一个map, request 被重新包装, request.getParameter() 方法被重写, 就会从自己封装的 map 中取数据
+	
+
+element.click()这种写法不支持给动态元素或样式绑定事件。
+支持给动态元素绑定事件的是.live()和.on()。live在jQquery1.7后就不推荐使用了。
+使用.on()时注意，on前面的元素必须在页面加载的时候就存在DOM里面。
+			

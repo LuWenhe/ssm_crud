@@ -18,7 +18,7 @@
   	
   	<association property="department" javaType="edu.just.ssm.model.Department">
   		<id column="dept_id" property="deptId"/>
-  		<result column="name" property="name"/>
+  		<result column="deptname" property="name"/>
   	</association>
   </resultMap>
   
@@ -87,8 +87,8 @@
   </sql>
   
   <sql id="Base_Column_List_Dept">
-  	e.emp_id, e.`name`, e.gender, e.email,
-	d.dept_id, d.`name`
+  	e.emp_id, e.`name`, e.gender, e.email, e.d_id,
+	d.dept_id, d.`name` deptname
   </sql>
   
   <select id="selectByExample" parameterType="edu.just.ssm.model.EmployeeExample" resultMap="BaseResultMap">
@@ -135,8 +135,10 @@
   <!-- 查询员工信息同时查询部门信息 -->
   <select id="selectByPaimayKeyWithDept" resultMap="withDept">
   	select 
-    <include refid="Base_Column_List" />
-    from employee
+    <include refid="Base_Column_List_Dept" />
+    from employee e
+    LEFT JOIN department d
+    ON e.d_id = d.dept_id
     where emp_id = #{empId,jdbcType=INTEGER}
   </select>
  
