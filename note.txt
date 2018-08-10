@@ -27,4 +27,7 @@ AJAX 发送 PUT 请求引发的血案: PUT 请求, 请求体中的数据, request.getParameter("na
 element.click()这种写法不支持给动态元素或样式绑定事件。
 支持给动态元素绑定事件的是.live()和.on()。live在jQquery1.7后就不推荐使用了。
 使用.on()时注意，on前面的元素必须在页面加载的时候就存在DOM里面。
+
+对于HTML元素本身就带有的固有属性，在处理时，使用prop方法。
+对于HTML元素我们自己自定义的DOM属性，在处理时，使用attr方法。
 			

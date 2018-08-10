@@ -16,6 +16,23 @@ public class EmployeeService {
 	@Autowired
 	private EmployeeMapper employeeMapper;
 	
+	/**
+	 * 删除多个员工
+	 * @param id
+	 */
+	public void deleteEmployees(List<Integer> ids) {
+		EmployeeExample example = new EmployeeExample();
+		Criteria criteria = example.createCriteria();
+		
+		//delete from employee where empid in(x,x,x)
+		criteria.andEmpIdIn(ids);
+		employeeMapper.deleteByExample(example);
+	}
+	
+	/**
+	 * 删除单个员工
+	 * @param id
+	 */
 	public void deleteEmployee(Integer id) {
 		employeeMapper.deleteByPrimaryKey(id);
 	}

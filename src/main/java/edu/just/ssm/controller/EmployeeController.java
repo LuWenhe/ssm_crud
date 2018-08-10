@@ -1,5 +1,6 @@
 package edu.just.ssm.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,15 +32,49 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 
+/*	@RequestMapping(value="/emps/{ids}", method=RequestMethod.DELETE)
+	@ResponseBody
+	public Message deleteEmployees(@PathVariable("ids")String ids) {
+		List<Integer> list = new ArrayList<>();
+		String[] idStrs = ids.split("-");
+		
+		if(idStrs != null) {
+			for(String idStr: idStrs) {
+				Integer idInte = Integer.parseInt(idStr);
+				list.add(idInte);
+			}
+		}
+		
+		employeeService.deleteEmployees(list);
+		return Message.success();
+	}*/
+	
 	/**
-	 * 员工删除方法
+	 * 删除单个或者多个员工
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value="/emp/{id}", method=RequestMethod.DELETE)
+	@RequestMapping(value="/emp/{ids}", method=RequestMethod.DELETE)
 	@ResponseBody
-	public Message deleteEmployee(@PathVariable("id")Integer empId) {
-		employeeService.deleteEmployee(empId);
+	public Message deleteEmployee(@PathVariable("ids")String empIdStr) {
+		//如果是批量删除
+		if(empIdStr.contains("-")) {
+			List<Integer> list = new ArrayList<>();
+			String[] idStrs = empIdStr.split("-");
+			
+			if(idStrs != null) {
+				for(String idStr: idStrs) {
+					Integer idInte = Integer.parseInt(idStr);
+					list.add(idInte);
+				}
+			}
+			
+			employeeService.deleteEmployees(list);
+		//如果是单个删除
+		} else {
+			Integer empId = Integer.parseInt(empIdStr);
+			employeeService.deleteEmployee(empId);
+		}
 		return Message.success();
 	}
 	

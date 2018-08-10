@@ -43,7 +43,7 @@
 			//员工删除信息的模态框点击事件
 			$("table").on("click", ".delete-btn", function(){
 				//弹出是否删除对话框
-				var empName = $(this).parents("tr").find("td:eq(1)").text();
+				var empName = $(this).parents("tr").find("td:eq(2)").text();
 				var con = confirm("确认删除 " + empName + " 的信息吗?");
 				
 				var empId = $(this).attr("empid");
@@ -193,7 +193,56 @@
 						to_page(currentPage);
 					}
 				}); */
+			});
+			
+			//完成全选和全不选
+			$("#check_all").click(function(){
+				//attr 获取 checked 是 undefined, 使用 prop
+				var a = $(this).prop("checked");
+				$(".check_item").prop("checked", a);
+			});
+			
+			$("table").on("click", ".check_item", function(){
+				//判断当前选中的元素是否是 10 个
+				var checkedLen = $(".check_item:checked").length;
+				var checkBoxLen = $(".check_item").length;
 				
+				if(checkedLen == checkBoxLen){
+					$("#check_all").prop("checked", true);
+				} else {
+					$("#check_all").prop("checked", false);
+				}
+			});
+			
+			//点击全部删除按钮
+			$("#empModal_delete").click(function(){
+				var allNames = "";
+				var allIds = "";
+				
+				$(".check_item:checked").each(function(){
+					var name = $(this).parents("tr").find("td:eq(2)").text();
+					var id = $(this).parents("tr").find("td:eq(1)").text();
+					allNames += name + ",";
+					allIds += id + "-";
+				})
+				
+				var allNames1 = allNames.substring(0, allNames.length - 1);
+				var allIds = allIds.substring(0, allIds.length - 1);
+				
+				if(allNames == "") return;
+
+				if(confirm("确认删除[" + allNames1 + "]吗?")){
+					$.ajax({
+						url: "emp/" + allIds,
+						type: "POST",
+						data: "&_method=DELETE",
+						success: function(data){
+							alert("删除成功");
+							
+							to_page(currentPage);
+						}
+					});
+				}
 			});
 			
 		});
@@ -308,12 +357,11 @@
 			var emps = result.extend.pageInfo.list;
 			
 			for(var i=0; i<emps.length; i++){
+				var checkBoxId = $("<td><input type='checkbox' class='check_item'/></td>");
 				var empId = $("<td></td>").append(emps[i].empId);
-				var name = $("<td></td>").append(emps[i].name);
-		
+				var name = $("<td></td>").append(emps[i].name);	
 				var gender = emps[i].gender == 'm' ? '男' : '女';
 				var gender = $("<td></td>").append(gender);
-		
 				var email = $("<td></td>").append(emps[i].email);
 				var departmentName = $("<td></td>").append(emps[i].department.name);
 			
@@ -326,7 +374,8 @@
 				
 				var btnTd = $("<td></td>").append(editBtn).append(" ").append(delBtn);
 				
-				$("<tr></tr>").append(empId)
+				$("<tr></tr>").append(checkBoxId)
+					.append(empId)
 					.append(name)
 					.append(gender)
 					.append(email)
@@ -553,7 +602,7 @@
 			<div class="row">
 				<div class="col-md-4 col-md-offset-8">
 					<button class="btn btn-success" id="empModal_btn">增加</button>
-					<button class="btn btn-danger">删除</button>
+					<button class="btn btn-danger" id="empModal_delete">删除</button>
 				</div>
 			</div>
 	
@@ -565,6 +614,9 @@
 					<table class="table table-hover">
 						<thead>
 							<tr>
+								<th>
+									<input type="checkbox" id="check_all"/>
+								</th>
 								<th>编号</th>
 								<th>姓名</th>
 								<th>性别</th>

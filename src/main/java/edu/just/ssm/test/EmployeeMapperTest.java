@@ -14,6 +14,7 @@ import edu.just.ssm.dao.EmployeeMapper;
 import edu.just.ssm.model.Employee;
 import edu.just.ssm.model.EmployeeExample;
 import edu.just.ssm.model.EmployeeExample.Criteria;
+import edu.just.ssm.service.EmployeeService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
@@ -23,7 +24,15 @@ public class EmployeeMapperTest {
 	private EmployeeMapper employeeMapper;
 
 	@Autowired
+	private EmployeeService employeeService;
+	
+	@Autowired
 	private SqlSession sqlSession;
+	
+	@Test
+	public void getXXX() {
+		System.out.println(employeeService.getEmployees());
+	}
 	
 	@Test
 	public void deleteEmp() {
